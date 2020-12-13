@@ -1,0 +1,29 @@
+{
+  "name": "perabot",
+  "version": "2.0.0",
+  "description": "Bot di PereCraft",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PereCraft/PeraBot.git"
+  },
+  "keywords": [
+    "bot",
+    "discord"
+  ],
+  "author": "PereCraft",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PereCraft/PeraBot/issues"
+  },
+  "homepage": "https://github.com/PereCraft/PeraBot#readme",
+  "dependencies": {
+    "@k3rn31p4nic/google-translate-api": "^1.1.1",
+    "discord.js": "^12.5.1",
+    "fs": "0.0.1-security",
+    "html-to-text": "^6.0.0"
+  }
+}
