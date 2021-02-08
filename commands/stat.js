@@ -6,13 +6,13 @@ module.exports = {
     name: "stat",
     description: "Mostra le informazioni del server.",
     man: "Mostra le informazioni del server.",
+    args: "0",
 
     run: async(client, msg, content) => {
 
         let string = "";
 
         https.get(config.server_api, (res) => {
-
             res.setEncoding('utf-8');
 
             res.on('data', (chunk) => {
@@ -25,8 +25,8 @@ module.exports = {
                 try{
                     json = JSON.parse(string);
                   }catch (error){
-                    msg.channel.send("**Errore nella lettura delle info sul server. Segnala l'errore a @Admin.**");
-                    console.log(error);
+                    msg.channel.send("**:x: Errore nella lettura delle info sul server. Segnala l'errore a @Admin. :x:**");
+                    console.error(error);
                     return
                   }
 
@@ -61,8 +61,8 @@ module.exports = {
             })
 
         }).on('error', (error) => {
-            msg.channel.send("**C'è stato un errore interno, siete pregati di segnalare l'errore a un @Admin.**")
-            console.log(error);
+            msg.channel.send("**:x: C'è stato un errore interno, siete pregati di segnalare l'errore a un @Admin. :x:**")
+            console.error(error);
         })
 
     }

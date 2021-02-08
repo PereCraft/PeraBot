@@ -1,5 +1,5 @@
 const discord = require('discord.js');
-const { description } = require('./rules');
+//const { description } = require('./rules');
 
 module.exports = {
     name: "info",

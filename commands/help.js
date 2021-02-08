@@ -4,13 +4,13 @@ const files = require('fs').readdirSync('./commands').filter(file => file.endsWi
 module.exports = {
     name: "help",
     description: "Mostra questa schermata.",
-    man: "Mostra questa schermata. aggiungere il nome di un comando per averne maggiori informazioni.",
+    man: "Mostra questa schermata. Aggiungere il nome di un comando per averne maggiori informazioni.",
     args: "0-1",
 
     run: async(client, msg, content) => {
 
         if(content.length > 1) {
-            msg.reply("Ci sono troppi argomenti, cerca solo un comando.")    
+            msg.reply("**:x: Ci sono troppi argomenti, cerca solo un comando. :x:**")    
             return;
         }
 
@@ -28,7 +28,7 @@ Argomenti necessari: ${info.args}
         } else {
 
             if(content[0] != undefined)
-                msg.reply(`Il comando !${content[0]} non esiste.`);
+                msg.reply(`**Il comando !${content[0]} non esiste.**`);
 
             for(const file of files) {
                 

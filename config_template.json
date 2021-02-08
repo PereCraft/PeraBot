@@ -1,0 +1,13 @@
+{
+    "token": "your_token",
+    "prefix": "your_prefix",
+    "wikipera_api": "api_to_wiki",
+    "server_api": "api_to_mcsrvstat",
+    "peraSpam_config": {
+        "limit": 0, 
+        "time": 0,
+        "warnLimit": 0
+    },
+    "channel_report": "id_your_channel_report"
+}
+  

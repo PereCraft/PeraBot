@@ -15,17 +15,15 @@ const files = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 const client = new discord.Client();
 client.commands = new discord.Collection();
-const peraspam = new PeraSpam(process.env.configSpam, client); // Antispam
+const peraspam = new PeraSpam(config, client);
 
 for (const file of files) {
-
     const cmd = require(`./commands/${file}`);
     client.commands.set(cmd.name, cmd);
-
 }
 
 client.on('ready', async() => {
-    console.log("PeraBot started...");
+    console.log("Ready!");
 })
 
 client.on('message', async(msg) => {
@@ -39,11 +37,11 @@ client.on('message', async(msg) => {
     const cmdExec = content.shift().toLowerCase();
     
     try {
-        client.commands.get(cmdExec).run(discord, msg, content);
+        client.commands.get(cmdExec).run(client, msg, content);
     } catch(error) {
-        msg.channel.send("Il comando cercato non esiste. Fai `!help` per conoscere la pera");
+        msg.channel.send("**:x: Il comando cercato non esiste. Fai `!help` per conoscere la pera :x:**");
     }
 
 })
 
-client.login(process.env.token);
+client.login(config.token);

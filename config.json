@@ -1,6 +1,0 @@
-{
-    "prefix": "!",
-    "wikipera_api": "http://perecraft.altervista.org/api.php?action=parse&page=Regolamento&format=json",
-    "server_api": "https://api.mcsrvstat.us/2/mc.perecraft.ml"
-}
-  
