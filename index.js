@@ -1,47 +1,20 @@
-/*
- * ~ PeraBot ~
- *
- * Descrizione: Bot discord di PereCraft
- * Licenza: GPL3
- * Autori: Team di PereCraft
- */
+const Discord = require('discord.js');
+const WOKCommands = require('wokcommands');
 
-const discord = require('discord.js');
-const PeraSpam = require('./moderation/peraspam.js');
-const fs = require('fs');
+const Config = require('./config.json');
 
-const config = require('./config.json');
-const files = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const client = new Discord.Client({ partials: ['MESSAGE', 'REACTION'] });
 
-const client = new discord.Client();
-client.commands = new discord.Collection();
-const peraspam = new PeraSpam(config, client);
+client.on('ready', () => {
+    // TODO: Togli help
+    new WOKCommands(client, {
+        commandsDir: 'commands',
+        showWarns: true,
+        del: -1,
+        ignoreBots: true,
+    }).setDefaultPrefix(Config.prefix);
 
-for (const file of files) {
-    const cmd = require(`./commands/${file}`);
-    client.commands.set(cmd.name, cmd);
-}
-
-client.on('ready', async() => {
-    console.log("Ready!");
+    console.log('PeraBot is ready!');
 })
 
-client.on('message', async(msg) => {
-
-    if(!msg.author.bot)
-        peraspam.checkMessage(msg);
-
-    if(!msg.content.startsWith(config.prefix) || msg.author.bot) return;
-
-    const content = msg.content.slice(config.prefix.length).trim().split(/ +/);
-    const cmdExec = content.shift().toLowerCase();
-    
-    try {
-        client.commands.get(cmdExec).run(client, msg, content);
-    } catch(error) {
-        msg.channel.send("**:x: Il comando cercato non esiste. Fai `!help` per conoscere la pera :x:**");
-    }
-
-})
-
-client.login(config.token);
+client.login(Config.token);

@@ -1,25 +1,53 @@
-const htt = require('html-to-text');
-const http = require('http');
-
-const config = require('../config.json');
+//const HTT = require('html-to-text');
+const { htmlToText } = require('html-to-text');
+const Http = require('http');
+const Config = require('../config.json');
 
 module.exports = {
-    name: "rules",
-    description: "Mostra le regole del server.",
-    man: "Mostra le regole del server. C'è necessario almeno un argomento valido tra `generale` o `server`",
-    args: "1-2",
+    name: 'rules',
+    alias: ['r', 'rule'],
+    category: 'Supporto',
+    description: "Mostra le regole del server. C'è necessario almeno un argomento valido tra `generale` o `server`",
+    slash: true,
+    minArgs: 1,
+    maxArgs: 2,
+    expectedArgs: '<generale> <server>',
 
-    run: async(client, msg, content) => {
+    callback: async ({ args }) => {
+        args.map(value => value.toLowerCase());
 
-        if(content == 0) {
-            msg.channel.send("**Inserire almeno un argomento. Fai !help rules per maggiori informazioni.**");
-            return;
+        let jsonGet = () => {
+            return new Promise((resolve, reject) => {
+                Http.get(Config.wikipera_api, (res) => {
+                    res.setEncoding('utf-8')
+                    let rules = "";
+
+                    res.on('data', (chunk) => {
+                        rules += chunk;
+                    })
+
+                    res.on('end', () => {
+                        let json;
+
+                        try{
+                            json = JSON.parse(rules);
+                            resolve(json);
+                        }catch (error){
+                            console.error(error);
+                            reject("**:x: Errore nella lettura delle info sul server. Segnala l'errore a @Admin. :x:**");
+                        }
+                    })
+        
+                }).on("error", (error) => {
+                    console.error(error);
+                    reject("**:x: C'è stato un errore interno, siete pregati di segnalare l'errore a un @Admin. :x:**");
+                })
+            })
         }
 
-        content.map(value => value.toLowerCase());
+        let ret = "";
 
-        http.get(config.wikipera_api, (res) => {
-
+        await jsonGet().then((json) => {
             function readRules(array) {
                 let string = "";
           
@@ -31,48 +59,21 @@ module.exports = {
             
             }
 
-            let rules = "";
-            res.setEncoding("utf8");
+            let html = json.parse.text['*'];
+            let generalRules = readRules(htmlToText(html).split("\n\n")[5].split("\n")) + readRules(htmlToText(html).split("\n\n")[6].split("\n"));
+            let serverRules = readRules(htmlToText(html).split("\n\n")[8].split("\n"));
 
-            res.on('data', (chunk) => {
-                rules += chunk;
-            })
-
-            res.on('end', () => {
-                let json;
-
-                try{
-                    json = JSON.parse(rules);
-                }catch (error){
-                    console.error(error);
-                    msg.channel.send("**:x: Errore nella lettura delle info sul server. Segnala l'errore a @Admin. :x:**");
-                    return;
+            args.some((rulesCheck) => {
+                if(rulesCheck == "generale") {
+                    ret += "**REGOLAMENTO GENERALE**\n" + generalRules;
+                } else if(rulesCheck == "server") {
+                    ret += "**REGOLAMENTO SERVER**\n" + serverRules;
+                } else {
+                    ret = "**:x: Il regolamento cercato non esiste! Fai `!help rules` per maggiori informazioni. :x:**";
                 }
-
-                let contentRules = htt.htmlToText(json.parse.text['*']).split("\n\n");
-
-                generalRules = contentRules[4].split("\n");
-                serverRules = contentRules[7].split("\n");
-                
-                content.some((rulesCheck) => {
-
-                    if(rulesCheck == "generale"){
-                        msg.channel.send("**REGOLAMENTO GENERALE**\n" + readRules(generalRules));
-                    } else if(rulesCheck == "server") {
-                        msg.channel.send("**REGOLAMENTO DEL SERVER**\n" + readRules(serverRules));
-                    } else {
-                        msg.channel.send("**:x: Il regolamento cercato non esiste! Fai `!help rules` per maggiori informazioni. :x:**")
-                    }
-                    
-                })
-
             })
-
-        }).on("error", (error) => {
-            console.error(error);
-            msg.channel.send("**:x: C'è stato un errore interno, siete pregati di segnalare l'errore a un @Admin. :x:**");
         })
 
+        return ret;
     }
-
 }
